@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+
+typedef struct tocka {
+	float x;
+	float y;
+	float z;	
+} Tocka;
+
+typedef struct trokut {
+	struct tocka *t1;
+	struct tocka *t2;
+	struct tocka *t3;	
+} Trokut;
+
+
+
+
+void inputData(Tocka *p, Trokut *t, int n, int m) {
+	int i;
+	int ind1, ind2, ind3;
+		
+	FILE *fp;
+	fp = fopen("model.txt", "r");
+	float bz, bzv;
+	fp = fopen("model.txt", "r");
+	fscanf(fp, "%f\n", &bz); 
+	fscanf(fp, "%f\n", &bzv); 
+
+
+	for (i = 0; i < n; i++) {
+		fscanf(fp, "%f %f %f\n", &p[i].x, &p[i].y, &p[i].z);
+		}
+
+
+	for (i = 0; i < m; i++) {
+		fscanf(fp, "%d %d %d\n", &ind1, &ind2, &ind3);
+		t[i].t1 = &p[ind1];
+		t[i].t2 = &p[ind2];
+		t[i].t3 = &p[ind3];	
+		}
+		
+}
+
+
+
+float opseg(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	float prva, druga, treca, opseg;
+	prva = sqrt(pow(x3 - x1, 2) + pow(y3 - y1, 2) + pow(z3 - z1, 2));
+	druga = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) + pow(z2 - z1, 2));
+	treca = sqrt(pow(x3 - x2, 2) + pow(y3 - y2, 2) + pow(z3 - z2, 2));
+	opseg = prva + druga + treca;
+	return opseg;
+}
+	
+
+
+ int main(void){
+	Tocka *tocke;
+	Trokut *trokuti;
+	Trokut *max;
+	int i, n, m;
+	float Dtrenutni = 0;
+	float tr_ops;
+	float maxopseg=0; 
+	float Dmax=0;
+	
+	
+	
+	FILE *fp;
+	fp = fopen("model.txt", "r");
+	fscanf(fp, "%d\n", &n); //Tocke
+	fscanf(fp, "%d\n", &m); //Trokuti
+	fclose(fp);
+
+
+	
+	tocke = (Tocka *)malloc(n * sizeof(Tocka));
+	trokuti = (Trokut *)malloc(m * sizeof(Trokut));
+
+	
+	
+	inputData(tocke, trokuti, n, m);
+	
+	
+	
+	for (i = 0; i < n; i++) {
+	tr_ops = 0;
+	tr_ops = opseg(trokuti[i].t1->x, trokuti[i].t1->y, trokuti[i].t1->z, trokuti[i].t2->x, trokuti[i].t2->y, trokuti[i].t2->z, trokuti[i].t3->x, trokuti[i].t3->y, trokuti[i].t3->z);
+
+	if (tr_ops > maxopseg)
+	maxopseg = tr_ops;
+	}
+	
+	//ispis
+	printf("REZULTATI\n");
+	printf("%.2f", maxopseg);
+	 return 0;
+
+}
